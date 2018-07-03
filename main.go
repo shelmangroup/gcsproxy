@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -21,8 +22,9 @@ var (
 )
 
 var (
-	client *storage.Client
-	ctx    = context.Background()
+	client        *storage.Client
+	ctx           = context.Background()
+	indexDocument = "index.html"
 )
 
 func handleError(w http.ResponseWriter, err error) {
@@ -100,6 +102,9 @@ func wrapper(fn func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
 
 func proxy(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
+	if strings.HasSuffix(params["object"], "/") {
+		params["object"] += indexDocument
+	}
 	obj := client.Bucket(params["bucket"]).Object(params["object"])
 	attr, err := obj.Attrs(ctx)
 	if err != nil {
