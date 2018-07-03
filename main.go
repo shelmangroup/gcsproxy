@@ -16,15 +16,15 @@ import (
 )
 
 var (
-	bind        = flag.String("b", "127.0.0.1:8080", "Bind address")
-	verbose     = flag.Bool("v", false, "Show access log")
-	credentials = flag.String("c", "", "The path to the keyfile. If not present, client will use your default application credentials.")
+	bind          = flag.String("b", "127.0.0.1:8080", "Bind address")
+	verbose       = flag.Bool("v", false, "Show access log")
+	credentials   = flag.String("c", "", "The path to the keyfile. If not present, client will use your default application credentials.")
+	indexDocument = flag.String("d", "index.html", "Index document")
 )
 
 var (
-	client        *storage.Client
-	ctx           = context.Background()
-	indexDocument = "index.html"
+	client *storage.Client
+	ctx    = context.Background()
 )
 
 func handleError(w http.ResponseWriter, err error) {
@@ -103,7 +103,7 @@ func wrapper(fn func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
 func proxy(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	if strings.HasSuffix(params["object"], "/") {
-		params["object"] += indexDocument
+		params["object"] += *indexDocument
 	}
 	obj := client.Bucket(params["bucket"]).Object(params["object"])
 	attr, err := obj.Attrs(ctx)
