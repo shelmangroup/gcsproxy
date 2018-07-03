@@ -13,6 +13,7 @@ spec:
       containers:
         - name: gcsproxy
           image: gcr.io/ea-seed-gcp/gcsproxy:latest
+          imagePullPolicy: Always
           command:
             - /gcsproxy
             - -b
@@ -44,26 +45,26 @@ spec:
   selector:
     app: gcsproxy
 
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: my-static-web
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /my-static-web-bucket/prefix
-    nginx.ingress.kubernetes.io/auth-signin: https://oauth-proxy.example.com/oauth2/start
-    nginx.ingress.kubernetes.io/auth-url: https://oauth-proxy.example.com/oauth2/auth
-spec:
-  tls:
-    - hosts:
-        - my-site.example.com
-      secretName: wildcard-example-com-tls
-  rules:
-    - host: "my-site.example.com"
-      http:
-        paths:
-          - path: /
-            backend:
-              serviceName: gcsproxy
-              servicePort: 8080
+# ---
+# apiVersion: extensions/v1beta1
+# kind: Ingress
+# metadata:
+#   name: my-static-web
+#   annotations:
+#     kubernetes.io/ingress.class: nginx
+#     nginx.ingress.kubernetes.io/rewrite-target: /my-static-web-bucket/prefix
+#     nginx.ingress.kubernetes.io/auth-signin: https://oauth-proxy.example.com/oauth2/start
+#     nginx.ingress.kubernetes.io/auth-url: https://oauth-proxy.example.com/oauth2/auth
+# spec:
+#   tls:
+#     - hosts:
+#         - my-site.example.com
+#       secretName: wildcard-example-com-tls
+#   rules:
+#     - host: "my-site.example.com"
+#       http:
+#         paths:
+#           - path: /
+#             backend:
+#               serviceName: gcsproxy
+#               servicePort: 8080

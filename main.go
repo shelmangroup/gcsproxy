@@ -102,7 +102,7 @@ func wrapper(fn func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
 
 func proxy(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	if strings.HasSuffix(params["object"], "/") {
+	if strings.HasSuffix(params["object"], "/") || params["object"] == "" {
 		params["object"] += *indexDocument
 	}
 	obj := client.Bucket(params["bucket"]).Object(params["object"])
